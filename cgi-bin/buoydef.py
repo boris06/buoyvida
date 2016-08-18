@@ -1,3 +1,5 @@
+#!/usr/bin/env python 
+# -*- coding: UTF-8 -*- 
 
 ##buoySelFields ={'Wind Speed and Gusts': ['wind.vmspd', 'wind.maxspd'],
 ##                'Air Temperature and Humidity': ['air.tempmean','air.humidmean'],
