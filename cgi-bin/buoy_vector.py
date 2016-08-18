@@ -1,3 +1,6 @@
+#!/usr/bin/env python 
+# -*- coding: UTF-8 -*- 
+
 from buoydef import *
 from buoyvida import *
 import cgi
