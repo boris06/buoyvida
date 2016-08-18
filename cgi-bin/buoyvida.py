@@ -1,3 +1,6 @@
+#!/usr/bin/env python 
+# -*- coding: UTF-8 -*- 
+
 from datetime import datetime, timedelta
 import MySQLdb as mdb
 import numpy as np
