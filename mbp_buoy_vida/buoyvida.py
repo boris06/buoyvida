@@ -10,9 +10,10 @@ from matplotlib.dates import DateFormatter, HourLocator, DayLocator
 import cStringIO
 import base64
 
-def get_buoy_currents(period_list,cells):
+from mbp_buoy_vida import config
 
-    con = mdb.connect(server, username, password, database);
+def get_buoy_currents(dbConfig, period_list,cells):
+    con = mdb.connect(dbConfig.host, dbConfig.username, dbConfig.password, dbConfig.db)
     con.ping(True)    
     with con:
         cur = con.cursor()
@@ -49,9 +50,8 @@ def get_buoy_currents(period_list,cells):
 
     return(uarr,varr)
 
-def get_buoy_data(fields,tables,period_list):
-
-    con = mdb.connect(server, username, password, database);
+def get_buoy_data(dbConfig, fields,tables,period_list):
+    con = mdb.connect(dbConfig.host, dbConfig.username, dbConfig.password, dbConfig.db)
     con.ping(True)    
     with con:
         cur = con.cursor()
