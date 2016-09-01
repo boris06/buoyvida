@@ -2,25 +2,28 @@
 # -*- coding: UTF-8 -*- 
 
 import matplotlib
-# Force matplotlib to not use any Xwindows backend.
-matplotlib.use('Agg')
+matplotlib.use('Agg')         # Force matplotlib to not use any Xwindows backend.
+
+__DBG = False
+if __DBG == True:
+    import cgitb
+    cgitb.enable()            # Enable detailed and formated exception stacktrace logging
 
 from buoydef import *
 from buoyvida import *
-import cgi
-import cgitb
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
 import string
 
+from mbp_buoy_vida import config as DbConfig
+dbConfig = DbConfig.DbConfig()
+
 __all__ = ['vector']
 
     
-def vector(req, selectHeights=None, startDateTime=None, endDateTime=None):
-    cgitb.enable(logdir="")
-    rvBuf = ""
-    #form = cgi.FieldStorage()
+def vector(selectHeights=None, startDateTime=None, endDateTime=None, scriptAbsPath='/'):
+    global dbConfig
 
     all_heights = ['%d' % height for height in range(2,23)]
     def_heights = ['2', '5', '10', '15', '20']
@@ -109,6 +112,7 @@ def vector(req, selectHeights=None, startDateTime=None, endDateTime=None):
         errmsg = 'Start date and time must be before end date and time!'
         error = True
 
+    rvBuf = ""
     rvBuf += "<!DOCTYPE html>"
     rvBuf += "<html>"
     print
@@ -123,7 +127,7 @@ def vector(req, selectHeights=None, startDateTime=None, endDateTime=None):
     rvBuf += '</head>'
     print
     rvBuf += '<body>'    
-    rvBuf += '<form name="main" id="main" action="/mbp/static/buoy.py.web.gui/buoy_vector.py/vector">'
+    rvBuf += '<form method="get" name="main" id="main" action="%s/vector">' % (scriptAbsPath)
     rvBuf += '<h2>Wind, waves and sea currents from the oceanographic buoy Vida</h2>'
     rvBuf += '<hr>'
     rvBuf += '<label for="startDateTime">Start date and time:</label>'
@@ -149,7 +153,7 @@ def vector(req, selectHeights=None, startDateTime=None, endDateTime=None):
     rvBuf += '</form>'
     rvBuf += '&nbsp;'
     rvBuf += '&nbsp;'
-    rvBuf += '<form method="post" action="vector2excel.py" style="display:inline;">'
+    rvBuf += '<form method="get" action="%s/vector2excel" style="display:inline;">' % (scriptAbsPath)
     rvBuf += '<input type="hidden" name="startDateTime" value="%s">' % startDateTime
     rvBuf += '<input type="hidden" name="endDateTime" value="%s">' % endDateTime
     rvBuf += '<input type="hidden" name="cells" value="%s">' % cells
