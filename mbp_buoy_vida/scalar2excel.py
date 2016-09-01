@@ -38,8 +38,7 @@ def scalar2excel(selectPlot=None, startDateTime=None, endDateTime=None):
 
     wb = Workbook()
 
-    # grab the active worksheet
-    #ws = wb.active
+    #ws = wb.active       # NOTE: not available in ver 1.7
     ws = wb.get_active_sheet()
 
     # Data can be assigned directly to cells
@@ -57,6 +56,7 @@ def scalar2excel(selectPlot=None, startDateTime=None, endDateTime=None):
                 ws.cell(row = row, column = col+2).value = series[row-2,col]
                 # ws.cell(row = row, column = col+2).number_format = '0.00' # NOTE: not available in ver 1.7
 
+    # ???
     # colletters = map(chr, range(65, 65+nseries+1))
     # for colletter in colletters:
     #     ws.column_dimensions[colletter].width = 18
