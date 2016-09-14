@@ -31,7 +31,7 @@ def scalar2excel(selectPlot=None, startDateTime=None, endDateTime=None):
     period_list = make_period_list(startDateTime,endDateTime)
 
     # get buoy database parameters
-    (fields,tables,fieldDesc,yLab,axis,colorStyle) = get_buoyparam(selectPlot)
+    (fields,tables,fieldDesc,yLab,axis,colorStyle,fieldFactor) = get_buoyparam(selectPlot)
 
     # get buoy scalar data
     (nseries,series) = get_buoy_data(dbConfig, fields, tables, period_list)
@@ -53,6 +53,8 @@ def scalar2excel(selectPlot=None, startDateTime=None, endDateTime=None):
             if (np.isnan(series[row-2,col])):
                 ws.cell(row = row, column = col+2).value = None
             else:
+                if fieldFactor[col] != 1.0:
+                    series[row - 2, col] *= fieldFactor[col]
                 ws.cell(row = row, column = col+2).value = series[row-2,col]
                 # ws.cell(row = row, column = col+2).number_format = '0.00' # NOTE: not available in ver 1.7
 

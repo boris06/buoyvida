@@ -55,7 +55,10 @@ def vector(selectHeights=None, startDateTime=None, endDateTime=None, scriptAbsPa
             # for x in fields:
             #     fieldDict[x]
             # ??? fieldDesc = [fieldDict[x] for x in fields]
-            fieldDesc = string.join(fields)
+            # Damir
+            # fieldDesc = string.join(fields)
+            # Boris
+            fieldDesc = [fieldDict[x] for x in fields]
 
             (nseries,series)=get_buoy_data(dbConfig, fields, tables, period_list)
             uwind = series[:,0] * np.cos((270. - series[:,1])*np.pi/180.)
