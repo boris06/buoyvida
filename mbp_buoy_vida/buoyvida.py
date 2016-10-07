@@ -174,8 +174,10 @@ def make_scalar_plot(period_list,series,fieldDesc,yLab,axis,colorStyle,fieldFact
     t = date2num(period_list)
     isax2 = False
     for i in range(nseries):
+        if fieldFactor[i] != 1.0:
+            series[:, i] *= fieldFactor[i]
         if (axis[i] == 'left'):
-            ax1.plot(t,series[:,i],colorStyle[i], linewidth=2, label=fieldDesc[i])
+            ax1.plot(t, series[:, i], colorStyle[i], linewidth=2, label=fieldDesc[i])
         else:
             isax2 = True
 

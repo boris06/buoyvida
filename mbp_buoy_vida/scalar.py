@@ -42,13 +42,13 @@ def scalar(selectPlot=None, startDateTime=None, endDateTime=None, scriptAbsPath=
         if (len(period_list) <= 7*24*2):        
         
             # get buoy database parameters
-            (fields,tables,fieldDesc,yLab,axis,colorStyle) = get_buoyparam(selectPlot)
+            (fields,tables,fieldDesc,yLab,axis,colorStyle,fieldFactor) = get_buoyparam(selectPlot)
                 
             # get buoy scalar data
             (nseries,series) = get_buoy_data(dbConfig, fields,tables,period_list)
 
             # plot scalar data
-            encoded = make_scalar_plot(period_list,series,fieldDesc,yLab,axis,colorStyle)        
+            encoded = make_scalar_plot(period_list,series,fieldDesc,yLab,axis,colorStyle,fieldFactor)
         
             error = False
 
