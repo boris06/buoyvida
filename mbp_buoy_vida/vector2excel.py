@@ -51,7 +51,8 @@ def vector2excel(selectHeights=None, startDateTime=None, endDateTime=None):
     tables=['wind', 'awac_waves']
     # table
     # ??? fieldDesc = [fieldDict[x] for x in fields]
-    fieldDesc = string.join(fields)
+    fieldDesc = [fieldDict[x] for x in fields]
+    # fieldDesc = string.join(fields)
 
     (nseries,series)=get_buoy_data(dbConfig, fields, tables, period_list)
 
