@@ -3,6 +3,7 @@
 
 from cgi import parse_qs
 import sys
+import string
 
 __all__ = ["index", "scalar", "scalar2excel", "vector", "vector2excel"]
 
@@ -49,7 +50,7 @@ def getVector(environ):
     request_script_path = environ["SCRIPT_NAME"]
     qs = parse_qs(environ['QUERY_STRING'])
     rvBuf = vector.vector(
-            selectHeights = qs.get("selectHeights", [None])[0],
+            selectHeights = string.join(qs.get("selectHeights", [None]), ","),
             startDateTime = qs.get("startDateTime", [None])[0],
             endDateTime = qs.get("endDateTime", [None])[0],
             scriptAbsPath = request_script_path
@@ -62,7 +63,7 @@ def getVector2Excel(environ):
     request_script_path = environ["SCRIPT_NAME"]
     qs = parse_qs(environ['QUERY_STRING'])
     [filename, rvBuf] = vector2excel.vector2excel(
-            selectHeights = qs.get("selectHeights", [None])[0],
+            selectHeights = string.join(qs.get("selectHeights", [None]), ","),
             startDateTime = qs.get("startDateTime", [None])[0],
             endDateTime = qs.get("endDateTime", [None])[0]
             )
