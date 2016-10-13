@@ -44,7 +44,7 @@ def vector(selectHeights=None, startDateTime=None, endDateTime=None, scriptAbsPa
     if (start_date < end_date):
         
         # make period list
-        period_list = make_period_list(startDateTime,endDateTime)
+        period_list = make_period_list(startDateTime, endDateTime)
 
         if (len(period_list) <= 7*24*2):            
         
@@ -159,8 +159,7 @@ def vector(selectHeights=None, startDateTime=None, endDateTime=None, scriptAbsPa
     rvBuf += '<form method="get" action="%s/vector2excel" style="display:inline;">' % (scriptAbsPath)
     rvBuf += '<input type="hidden" name="startDateTime" value="%s">' % startDateTime
     rvBuf += '<input type="hidden" name="endDateTime" value="%s">' % endDateTime
-    rvBuf += '<input type="hidden" name="cells" value="%s">' % cells
-    rvBuf += '<input type="hidden" name="heights" value="%s">' % heights
+    rvBuf += '<input type="hidden" name="selectHeights" value="%s">' % string.join(heights, ",")
     rvBuf += '<button type="submit">Download to Excel!</button>'
     rvBuf += '</form>'
     rvBuf += '&nbsp;'

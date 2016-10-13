@@ -23,8 +23,6 @@ dbConfig = DbConfig.DbConfig()
 
 def vector2excel(selectHeights=None, startDateTime=None, endDateTime=None):
     global dbConfig
-
-
     all_heights = ['%d' % height for height in range(2,23)]
     def_heights = ['2', '5', '10', '15', '20']
     if selectHeights is None  or  startDateTime is None  or  endDateTime is None:
@@ -37,14 +35,13 @@ def vector2excel(selectHeights=None, startDateTime=None, endDateTime=None):
         except:
             heights = selectHeights
 
-    cells = map(str, (np.asarray(map(int, heights)) - 2)) 
+    start_date = startDateTime.replace('T', ' ')
+    end_date = endDateTime.replace('T', ' ')
 
-    ##startDateTime = '2015-09-03T00:00:00'
-    ##endDateTime = '2015-09-05T23:30:00'
-    ##
+    cells = map(str, (np.asarray(map(int, heights)) - 2))
 
     # make period list
-    period_list = make_period_list(startDateTime,endDateTime)
+    period_list = make_period_list(startDateTime, endDateTime)
 
     # get wind and waves data
     fields=['wind.vmspd', 'wind.vmdir', 'awac_waves.wave_height', 'awac_waves.mean_direction']
