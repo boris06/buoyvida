@@ -17,14 +17,13 @@ if __DBG == True:
 from buoyvida import *
 
 # from mbp_buoy_vida import config as DbConfig
-import config as DbConfig
-
+from mbp_buoy_vida import config as DbConfig
 dbConfig = DbConfig.DbConfig()
 
-__all__ = ['vector']
+__all__ = ['trajectory_hodograph']
 
 
-def make_traj_hodo_plot(curr_traj_e, curr_traj_n, zoom, buoy_position, curr_hodo_e, curr_hodo_n, max_cell,
+def make_traj_hodo_plot(scriptsRootDir, curr_traj_e, curr_traj_n, zoom, buoy_position, curr_hodo_e, curr_hodo_n, max_cell,
                         period_list):
     plt.figure(figsize=(14, 6))
 
@@ -79,7 +78,8 @@ def make_traj_hodo_plot(curr_traj_e, curr_traj_n, zoom, buoy_position, curr_hodo
     ax1 = plt.subplot(1, 2, 1)
 
     # the basemap of the part of the Gulf of Trieste was previously saved to pickle
-    m2 = pickle.load(open('cgi-bin/buoy.trajectory.pickle', 'rb'))  # load here the above pickle
+    tmpFileName = "%s/%s" % (scriptsRootDir, "buoy.trajectory.pickle")
+    m2 = pickle.load(open(tmpFileName, 'rb'))  # load here the above pickle
 
     m2.ax = ax1
     # draw coastlines, country boundaries, fill continents.
@@ -200,7 +200,7 @@ def make_traj_hodo_plot(curr_traj_e, curr_traj_n, zoom, buoy_position, curr_hodo
     return encoded
 
 
-def trajectory_hodograph(endDate=None, endTime=None, selectHeight=None, selectDuration=None, selectZoom=None,
+def trajectory_hodograph(scriptsRootDir, endDate=None, endTime=None, selectHeight=None, selectDuration=None, selectZoom=None,
                          selectBuoyPosition=None, selectDateTime=None, selectMaxHeight=None, getHodograph=None,
                          endDateHidden=None, endTimeHidden=None, durationHidden=None):
     global dbConfig
@@ -243,7 +243,7 @@ def trajectory_hodograph(endDate=None, endTime=None, selectHeight=None, selectDu
             selectMaxHeight = '22 m'
             indDateTime = len(period_list) - 1
 
-    (current_E, current_N) = get_buoy_currents(period_list, all_cells)
+    (current_E, current_N) = get_buoy_currents(dbConfig, period_list, all_cells)
 
     curr_traj_E = current_E[selectCell]
     curr_traj_N = current_N[selectCell]
@@ -265,7 +265,7 @@ def trajectory_hodograph(endDate=None, endTime=None, selectHeight=None, selectDu
     maxCell = ['%s m' % height for height in all_heights].index(selectMaxHeight) + 1
 
     # make the joint trajectory and hodograph plot
-    traj_hodo_encoded = make_traj_hodo_plot(curr_traj_E, curr_traj_N, int(selectZoom), selectBuoyPosition, curr_hodo_E,
+    traj_hodo_encoded = make_traj_hodo_plot(scriptsRootDir, curr_traj_E, curr_traj_N, int(selectZoom), selectBuoyPosition, curr_hodo_E,
                                             curr_hodo_N, maxCell, period_list)
 
     # beginning of the construction of html page

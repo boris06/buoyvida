@@ -5,7 +5,8 @@ from cgi import parse_qs
 import sys
 import string
 
-__all__ = ["index", "scalar", "scalar2excel", "vector", "vector2excel"]
+__all__ = ["index", "scalar", "scalar2excel", "vector", "vector2excel", "trajectory_hodograph"]
+_mbp_module_name = "mbp_buoy_vida"
 
 def getIndex(environ):
     rvBuf = "Available functions:\n"
@@ -80,6 +81,30 @@ def getVector2Excel(environ):
     return [filename, rvBuf]
 
 
+def getTrajectoryHodograph(environ):
+    from mbp_buoy_vida import trajectory_hodograph
+    request_script_path = environ["SCRIPT_NAME"]
+    scriptsRootDir = "%s/%s" % (environ["CONTEXT_DOCUMENT_ROOT"], _mbp_module_name)
+    qs = parse_qs(environ['QUERY_STRING'])
+    rvBuf = trajectory_hodograph.trajectory_hodograph(
+        scriptsRootDir=scriptsRootDir,
+        endDate=qs.get("endDate", [None])[0],
+        endTime=qs.get("endTime", [None])[0],
+        selectHeight=qs.get("selectHeight", [None])[0],
+        selectDuration=qs.get("selectDuration", [None])[0],
+        selectZoom=qs.get("selectZoom", [None])[0],
+        selectBuoyPosition=qs.get("selectBuoyPosition", [None])[0],
+        selectDateTime=qs.get("selectDateTime", [None])[0],
+        selectMaxHeight=qs.get("selectMaxHeight", [None])[0],
+        getHodograph=qs.get("selectMaxHeight", [None])[0],
+        endDateHidden=qs.get("endDateHidden", [None])[0],
+        endTimeHidden=qs.get("endTimeHidden", [None])[0],
+        durationHidden=qs.get("durationHidden", [None])[0]
+        )
+    return "<pre>%s</pre>" % (str(environ))
+    return rvBuf
+
+
 def application(environ, start_response):
     status = "200 OK"
     output = "Hello World!"
@@ -106,6 +131,9 @@ def application(environ, start_response):
         [filename, response_body] = getVector2Excel(environ)
         response_headers.append(("Content-type", "application/octet-stream"))
         response_headers.append(("Content-Disposition", 'attachment; filename="%s"' % filename))
+    elif request_action == "/trajectory_hodograph":
+        response_body = getTrajectoryHodograph(environ)
+        response_headers.append(("Content-type", "text/html"))
     else:
         response_headers.append(("Content-type", "text/plain"))
         response_body = "n/a"
