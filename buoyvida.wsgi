@@ -49,8 +49,13 @@ def getVector(environ):
     from mbp_buoy_vida import vector
     request_script_path = environ["SCRIPT_NAME"]
     qs = parse_qs(environ['QUERY_STRING'])
+    selectHeights = qs.get("selectHeights", [None])
+    try:
+        selectHeights = string.join(selectHeights, ",")
+    except:
+        pass
     rvBuf = vector.vector(
-            selectHeights = string.join(qs.get("selectHeights", [None]), ","),
+            selectHeights = selectHeights,
             startDateTime = qs.get("startDateTime", [None])[0],
             endDateTime = qs.get("endDateTime", [None])[0],
             scriptAbsPath = request_script_path
@@ -62,8 +67,13 @@ def getVector2Excel(environ):
     from mbp_buoy_vida import vector2excel
     request_script_path = environ["SCRIPT_NAME"]
     qs = parse_qs(environ['QUERY_STRING'])
+    selectHeights = qs.get("selectHeights", [None])
+    try:
+        selectHeights = string.join(selectHeights, ",")
+    except:
+        pass
     [filename, rvBuf] = vector2excel.vector2excel(
-            selectHeights = string.join(qs.get("selectHeights", [None]), ","),
+            selectHeights = selectHeights,
             startDateTime = qs.get("startDateTime", [None])[0],
             endDateTime = qs.get("endDateTime", [None])[0]
             )
