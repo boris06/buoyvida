@@ -293,10 +293,12 @@ def trajectory_hodograph(scriptsRootDir, endDate=None, endTime=None, selectHeigh
     # two IOC UNESCO logos, title, NIB MBP logo
     rvBuf += '<table>'
     rvBuf += '<tr>'
-    with open('cgi-bin/natcom_slovenia_si.png', "rb") as image_file:
+    tmpFileName = "%s/%s" % (scriptsRootDir, "natcom_slovenia_si.png")
+    with open(tmpFileName, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read())
     rvBuf1 = '<div align="left"><img style="height:140px;" src=\"data:image/png;base64,' + encoded_string + "\" /></div>"
-    with open('cgi-bin/ioc_si_national_committee_slovenia_si.png', "rb") as image_file:
+    tmpFileName = "%s/%s" % (scriptsRootDir, "ioc_si_national_committee_slovenia_si.png")
+    with open(tmpFileName, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read())
     rvBuf2 = '<div align="left"><img style="height:140px;" src=\"data:image/png;base64,' + encoded_string + "\" /></div>"
     rvBuf += '<th>' + rvBuf1 + '</th>'
@@ -308,7 +310,8 @@ def trajectory_hodograph(scriptsRootDir, endDate=None, endTime=None, selectHeigh
     rvBuf += '<th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>'
     rvBuf += '<th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>'
     rvBuf += '<th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>'
-    with open('cgi-bin/logo_MBP_Pantone_slo.png', "rb") as image_file:
+    tmpFileName = "%s/%s" % (scriptsRootDir, "logo_MBP_Pantone_slo.png")
+    with open(tmpFileName, "rb") as image_file:
         encoded_string = base64.b64encode(image_file.read())
     rvBuf3 = '<div align="left"><img style="height:75px;" src=\"data:image/png;base64,' + encoded_string + "\" /></div>"
     rvBuf += '<th>' + rvBuf3 + '</th>'
@@ -502,4 +505,4 @@ def trajectory_hodograph(scriptsRootDir, endDate=None, endTime=None, selectHeigh
     rvBuf += '</html>'
 
     # finally create the whole html
-    print(rvBuf)
+    return rvBuf

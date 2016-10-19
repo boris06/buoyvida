@@ -101,7 +101,6 @@ def getTrajectoryHodograph(environ):
         endTimeHidden=qs.get("endTimeHidden", [None])[0],
         durationHidden=qs.get("durationHidden", [None])[0]
         )
-    return "<pre>%s</pre>" % (str(environ))
     return rvBuf
 
 
