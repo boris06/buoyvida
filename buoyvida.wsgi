@@ -86,6 +86,13 @@ def getTrajectoryHodograph(environ):
     request_script_url = environ["SCRIPT_NAME"]
     scriptsRootDir = "%s/%s" % (environ["CONTEXT_DOCUMENT_ROOT"], _mbp_module_name)
     qs = parse_qs(environ['QUERY_STRING'])
+
+    formOp = trajectory_hodograph.FORM_OP_NONE
+    if qs.has_key("getTrajectory"):
+        formOp = trajectory_hodograph.FORM_OP_GET_TRAJECTORY
+    elif qs.has_key("getHodograph"):
+        formOp = trajectory_hodograph.FORM_OP_GET_HODOBRAPH
+
     rvBuf = trajectory_hodograph.trajectory_hodograph(
         scriptsRootDir = scriptsRootDir,
         endDate = qs.get("endDate", [None])[0],
@@ -96,7 +103,7 @@ def getTrajectoryHodograph(environ):
         selectBuoyPosition = qs.get("selectBuoyPosition", [None])[0],
         selectDateTime = qs.get("selectDateTime", [None])[0],
         selectMaxHeight = qs.get("selectMaxHeight", [None])[0],
-        getHodograph  =qs.get("selectMaxHeight", [None])[0],
+        formOp = formOp,
         endDateHidden = qs.get("endDateHidden", [None])[0],
         endTimeHidden = qs.get("endTimeHidden", [None])[0],
         durationHidden = qs.get("durationHidden", [None])[0],

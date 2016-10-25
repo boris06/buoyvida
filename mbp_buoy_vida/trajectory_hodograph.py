@@ -8,6 +8,10 @@ import matplotlib
 
 matplotlib.use('Agg')  # Force matplotlib to not use any Xwindows backend.
 
+FORM_OP_NONE = 0
+FORM_OP_GET_HODOBRAPH = 1
+FORM_OP_GET_TRAJECTORY = 2
+
 __DBG = False
 if __DBG == True:
     import cgitb
@@ -201,7 +205,7 @@ def make_traj_hodo_plot(scriptsRootDir, curr_traj_e, curr_traj_n, zoom, buoy_pos
 
 
 def trajectory_hodograph(scriptsRootDir, endDate=None, endTime=None, selectHeight=None, selectDuration=None, selectZoom=None,
-                         selectBuoyPosition=None, selectDateTime=None, selectMaxHeight=None, getHodograph=None,
+                         selectBuoyPosition=None, selectDateTime=None, selectMaxHeight=None, formOp=None,
                          endDateHidden=None, endTimeHidden=None, durationHidden=None, scriptAbsUrl='/'):
     global dbConfig
 
@@ -238,7 +242,7 @@ def trajectory_hodograph(scriptsRootDir, endDate=None, endTime=None, selectHeigh
         indDateTime = len(period_list) - 1
     else:
         # if user pressed the button "getHodograph" or changed the slider "selectZoom" or changed "selectBuoyPosition"
-        if getHodograph \
+        if formOp == FORM_OP_GET_HODOBRAPH \
            or ( endDate == endDateHidden and \
                 endTime == endTimeHidden and \
                 selectDuration == durationHidden \
