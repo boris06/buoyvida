@@ -83,23 +83,24 @@ def getVector2Excel(environ):
 
 def getTrajectoryHodograph(environ):
     from mbp_buoy_vida import trajectory_hodograph
-    request_script_path = environ["SCRIPT_NAME"]
+    request_script_url = environ["SCRIPT_NAME"]
     scriptsRootDir = "%s/%s" % (environ["CONTEXT_DOCUMENT_ROOT"], _mbp_module_name)
     qs = parse_qs(environ['QUERY_STRING'])
     rvBuf = trajectory_hodograph.trajectory_hodograph(
-        scriptsRootDir=scriptsRootDir,
-        endDate=qs.get("endDate", [None])[0],
-        endTime=qs.get("endTime", [None])[0],
-        selectHeight=qs.get("selectHeight", [None])[0],
-        selectDuration=qs.get("selectDuration", [None])[0],
-        selectZoom=qs.get("selectZoom", [None])[0],
-        selectBuoyPosition=qs.get("selectBuoyPosition", [None])[0],
-        selectDateTime=qs.get("selectDateTime", [None])[0],
-        selectMaxHeight=qs.get("selectMaxHeight", [None])[0],
-        getHodograph=qs.get("selectMaxHeight", [None])[0],
-        endDateHidden=qs.get("endDateHidden", [None])[0],
-        endTimeHidden=qs.get("endTimeHidden", [None])[0],
-        durationHidden=qs.get("durationHidden", [None])[0]
+        scriptsRootDir = scriptsRootDir,
+        endDate = qs.get("endDate", [None])[0],
+        endTime = qs.get("endTime", [None])[0],
+        selectHeight = qs.get("selectHeight", [None])[0],
+        selectDuration = qs.get("selectDuration", [None])[0],
+        selectZoom = qs.get("selectZoom", [None])[0],
+        selectBuoyPosition = qs.get("selectBuoyPosition", [None])[0],
+        selectDateTime = qs.get("selectDateTime", [None])[0],
+        selectMaxHeight = qs.get("selectMaxHeight", [None])[0],
+        getHodograph  =qs.get("selectMaxHeight", [None])[0],
+        endDateHidden = qs.get("endDateHidden", [None])[0],
+        endTimeHidden = qs.get("endTimeHidden", [None])[0],
+        durationHidden = qs.get("durationHidden", [None])[0],
+        scriptAbsUrl = request_script_url
         )
     return rvBuf
 

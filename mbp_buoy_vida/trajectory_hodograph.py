@@ -202,7 +202,7 @@ def make_traj_hodo_plot(scriptsRootDir, curr_traj_e, curr_traj_n, zoom, buoy_pos
 
 def trajectory_hodograph(scriptsRootDir, endDate=None, endTime=None, selectHeight=None, selectDuration=None, selectZoom=None,
                          selectBuoyPosition=None, selectDateTime=None, selectMaxHeight=None, getHodograph=None,
-                         endDateHidden=None, endTimeHidden=None, durationHidden=None):
+                         endDateHidden=None, endTimeHidden=None, durationHidden=None, scriptAbsUrl='/'):
     global dbConfig
 
     all_heights = ['%d' % height for height in range(2, 23)]
@@ -211,7 +211,8 @@ def trajectory_hodograph(scriptsRootDir, endDate=None, endTime=None, selectHeigh
     all_options = ["at the start of trajectory", "at the middle of trajectory", "at the end of trajectory"]
 
     # check if user has entered the parameters for trajectory, otherwise set the default ones
-    if endDate is None or endTime is None or selectDuration is None or selectHeight is None or selectZoom is None or selectBuoyPosition is None:
+    if endDate is None or endTime is None or selectDuration is None or selectHeight is None \
+       or selectZoom is None or selectBuoyPosition is None:
         endDate = datetime.today().strftime('%Y-%m-%d')
         endTime = datetime.today().strftime('%H:%M')
         selectHeight = "22 m"
@@ -223,6 +224,8 @@ def trajectory_hodograph(scriptsRootDir, endDate=None, endTime=None, selectHeigh
     duration = int(selectDuration.split(" ")[0])
     startDateTime = (datetime.strptime(endDateTime, "%Y-%m-%dT%H:%M:%S") - timedelta(hours=duration)).strftime(
         '%Y-%m-%dT%H:%M:%S')
+    start_date = startDateTime.replace('T', ' ')
+    end_date = endDateTime.replace('T', ' ')
     selectCell = int(selectHeight.split(" ")[0]) - 2
 
     # make the list of valid dates and times from the start to the end of trajectory every 30 minutes
@@ -235,8 +238,11 @@ def trajectory_hodograph(scriptsRootDir, endDate=None, endTime=None, selectHeigh
         indDateTime = len(period_list) - 1
     else:
         # if user pressed the button "getHodograph" or changed the slider "selectZoom" or changed "selectBuoyPosition"
-        if not ((getHodograph is None) and not (
-                            endDate == endDateHidden and endTime == endTimeHidden and selectDuration == durationHidden)):
+        if getHodograph \
+           or ( endDate == endDateHidden and \
+                endTime == endTimeHidden and \
+                selectDuration == durationHidden \
+              ):
             indDateTime = [item.strftime('%d.%m.%Y %H:%M') for item in period_list].index(selectDateTime)
         else:
             selectDateTime = period_list[-1].strftime('%d.%m.%Y %H:%M')
@@ -288,7 +294,7 @@ def trajectory_hodograph(scriptsRootDir, endDate=None, endTime=None, selectHeigh
     rvBuf += '<body>'
 
     # form
-    rvBuf += '<form  name="main" id="main" action="trajectory_hodograph.py">'
+    rvBuf += '<form  name="main" id="main" action="%s/trajectory_hodograph">' % (scriptAbsUrl)
 
     # two IOC UNESCO logos, title, NIB MBP logo
     rvBuf += '<table>'
