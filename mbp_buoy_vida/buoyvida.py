@@ -97,22 +97,19 @@ def make_period_list(startDateTime,endDateTime):
 def make_vector_plot(period_list,uvec,vvec,C,desc,ref,keytext,ylabel,yrot,keyxpos,keyypos,scale):
 
     X,Y = np.meshgrid(date2num(period_list),[float(i) for i in range(len(desc))])
-	
-	# ----------------------- NEW CODE ------------------------------------ #
 
+    all_missing = True
     if (len(desc)==1):
         fig_height = 3.5*len(desc)
         fig, ax = plt.subplots(figsize=(11, fig_height))
     else:
         fig_height = 1.5*len(desc)
         fig, ax = plt.subplots(figsize=(11, fig_height))
-    
 	all_missing = False
     if np.isnan(uvec).all() or np.isnan(vvec).all():
         all_missing = True
 
     if all_missing:
-
         ax.set_xlim([date2num(period_list)[0], date2num(period_list)[-1]])
         if (len(desc) == 1):
             ax.set_ylim([-(1.0), 1.0])
@@ -120,9 +117,7 @@ def make_vector_plot(period_list,uvec,vvec,C,desc,ref,keytext,ylabel,yrot,keyxpo
             ax.set_ylim([-(1.0), float(len(desc))])
         plt.text(np.mean(date2num(period_list)), np.mean(range(len(desc))),
                 "Missing data!", fontsize=24, va='center', ha='center', color='red')
-
     else:
-
         q = ax.quiver(X, Y, uvec, vvec, color=C,
                       angles='uv', width=0.002, headwidth=5,scale=scale,
                       headlength=5, headaxislength=5 )
@@ -135,33 +130,6 @@ def make_vector_plot(period_list,uvec,vvec,C,desc,ref,keytext,ylabel,yrot,keyxpo
         qw = plt.quiverkey(q, keyxpos, keyypos, ref,
                           keytext % ref,color=C,
                           labelpos='W', coordinates='axes', fontproperties={'size':14})
-	
-# ---------------------- END OF NEW CODE ------------------------------ #
-
-# ----------------------- OLD CODE ----------------------------------- #    	
-
-    # if (len(desc)==1):
-        # fig_height = 3.5*len(desc)
-        # fig, ax = plt.subplots(figsize=(11, fig_height))
-    # else:
-        # fig_height = 1.5*len(desc)
-        # fig, ax = plt.subplots(figsize=(11, fig_height))
-         
-    # q = ax.quiver(X, Y, uvec, vvec, color=C,
-                  # angles='uv', width=0.002, headwidth=5,scale=scale,
-                  # headlength=5, headaxislength=5 )
-
-    # if (len(desc) == 1):
-        # pass
-    # else:
-        # ax.set_ylim([-(1.0), float(len(desc))])
-
-    # qw = plt.quiverkey(q, keyxpos, keyypos, ref,
-                      # keytext % ref,color=C,
-                      # labelpos='W', coordinates='axes', fontproperties={'size':14})
-
- 	# ---------------------- END OF OLD CODE ------------------------------ #
-	
 	plt.ylabel(ylabel, fontsize=11)
     plt.yticks(np.arange(len(desc)), desc, rotation=yrot)
 
