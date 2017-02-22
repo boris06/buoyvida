@@ -98,7 +98,7 @@ def make_vector_plot(period_list,uvec,vvec,C,desc,ref,keytext,ylabel,yrot,keyxpo
 
     X,Y = np.meshgrid(date2num(period_list),[float(i) for i in range(len(desc))])
 
-    all_missing = True
+    all_missing = False
     if (len(desc)==1):
         fig_height = 3.5*len(desc)
         fig, ax = plt.subplots(figsize=(11, fig_height))
