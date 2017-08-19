@@ -21,9 +21,9 @@ def get_buoy_currents(dbConfig, period_list,cells):
         for cell in (cells):
             con.ping(True)    
             cur = con.cursor()
-            cur.execute("SELECT profile.datestart, profile.dateend, awac_currents.current_E, awac_currents.current_N, awac_currents.cellno "
+            cur.execute("SELECT profile.datestart, profile.dateend, awac_currents.current_E, awac_currents.current_N, awac_currents.cell_no "
                         "FROM awac_currents RIGHT JOIN profile ON awac_currents.pid = profile.pid "
-                        "WHERE profile.dateend>='%s' AND profile.dateend<='%s' AND awac_currents.cellno=%s" % (period_list[0],period_list[-1],cell))
+                        "WHERE profile.dateend>='%s' AND profile.dateend<='%s' AND awac_currents.cell_no=%s" % (period_list[0],period_list[-1],cell))
             date_start = []
             date_end = []
             current_E = np.zeros(cur.rowcount)
