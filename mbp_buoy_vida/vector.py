@@ -101,7 +101,7 @@ def vector(selectHeights=None, startDateTime=None, endDateTime=None, scriptAbsPa
                 for j in range(len(period_list)):
                     colorVal.append(scalarMap.to_rgba(values[idx]))
             keytext = "Sea Current Speed %s cm/s"
-            currents_encoded = make_vector_plot(period_list,uvec,vvec,colorVal,desc,30,keytext,'Sea currents at height above sea bottom [m]','horizontal',0.55,0.96,None)
+            currents_encoded = make_vector_plot(period_list,uvec,vvec,colorVal,desc,30,keytext,'Sea currents at height [m] above sea bottom','horizontal',0.55,0.96,None)
 
             error = False
 
