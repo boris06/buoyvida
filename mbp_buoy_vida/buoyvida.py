@@ -49,7 +49,7 @@ def get_buoy_currents(dbConfig, period_list,cells):
 
     return(uarr,varr)
 
-def get_buoy_data(dbConfig, fields,tables,period_list):
+def get_buoy_data(dbConfig, fields,tables,period_list, whereCond=""):
     con = mdb.connect(dbConfig.host, dbConfig.username, dbConfig.password, dbConfig.db)
     con.ping(True)    
     with con:
@@ -61,6 +61,8 @@ def get_buoy_data(dbConfig, fields,tables,period_list):
                 strLeftJoin = strLeftJoin + 'LEFT JOIN %s ON profile.pid = %s.pid ' % (tables[i],tables[i])
         strSQL = strSQL + strLeftJoin
         strSQL = strSQL + "WHERE profile.dateend>='%s' AND profile.dateend<='%s' AND profile.period_length='30'" % (period_list[0],period_list[-1])
+        if len(whereCond) > 0 :
+            strSQL = strSQL + "AND " + whereCond
         cur.execute(strSQL)
         date_start = []
         date_end = []

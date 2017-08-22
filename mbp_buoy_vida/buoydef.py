@@ -13,10 +13,19 @@ buoyDelDBFields = [['wind.vmspd', 'wind.maxspd'],
                    ['air.tempmean', 'air.humidmean'],
                    ['sea_water.meantemp', 'awac_sensors.temperature', 'sea_water.meansalin'],
                    ['awac_waves.wave_height', 'awac_waves.wave_height_max', 'awac_waves.mean_period'],
-                   ['oxygen4835.concentrationmean', 'awac_sensors.temperature'],
+                   ['oxygen.concentrationmean', 'awac_sensors.temperature'],
                    ['air.tempmean', 'sea_water.meantemp', 'awac_sensors.temperature'],
-                   ['compass.dirmean', 'compass.rollmean', 'compass.pitchmean', 'wind.vmspd', 'wind.maxspd', ],
-                   ['par.par', 'oxygen4835.concentrationmean']]
+                   ['compass.yaw', 'compass.roll', 'compass.pitch', 'wind.vmspd', 'wind.maxspd', ],
+                   ['par.par', 'oxygen.concentrationmean']]
+
+buoyDBWhereConds= [ "",
+                   "",
+                   "",
+                   "",
+                   "((device_id=1) OR (device_id IS NULL))",
+                   "",
+                   "",
+                   "((device_id=1) OR (device_id IS NULL))"]
 
 buoySelFields = dict(zip(buoySelDesc, buoyDelDBFields))
 
@@ -55,10 +64,10 @@ buoyDBFields = ['wind.vmspd',
                 'awac_waves.mean_period',
                 'awac_waves.mean_direction',
                 'sea_water.chlorophile',
-                'compass.dirmean',
-                'compass.rollmean',
-                'compass.pitchmean',
-                'oxygen4835.concentrationmean',
+                'compass.yaw',
+                'compass.roll',
+                'compass.pitch',
+                'oxygen.concentrationmean',
                 'par.par']
 
 buoyFieldsDesc = ['Mean Wind Speed',
@@ -74,13 +83,14 @@ buoyFieldsDesc = ['Mean Wind Speed',
                   'Waves mean period',
                   'Waves mean direction',
                   'Chl-a (3m)',
-                  'Heading',
+                  'Yaw',
                   'Roll',
                   'Pitch',
                   'Dissolved Oxygen',
                   'PAR']
 
 fieldDict = dict(zip(buoyDBFields, buoyFieldsDesc))
+whereDict = dict(zip(buoySelDesc, buoyDBWhereConds))
 
 buoyFieldsUnit = ['m/s',
                   '$^0$',
@@ -147,6 +157,7 @@ yLabUnit = dict(zip(buoyDBFields, buoyFieldsUnit))
 def get_buoyparam(selectPlot):
 
     fields = buoySelFields[selectPlot]
+    whereCond = whereDict[selectPlot]
     tables = [(lambda i: fields[i].split('.')[0])(i) for i in range(len(fields))]
     tables = list(set(tables))
 
@@ -161,5 +172,5 @@ def get_buoyparam(selectPlot):
        
     fieldFactor = [factorDict[x] for x in fields]
 
-    return (fields,tables,fieldDesc,yLab,axis,colorStyle,fieldFactor)
+    return (fields,tables,fieldDesc,yLab,axis,colorStyle,fieldFactor, whereCond)
 

@@ -31,10 +31,10 @@ def scalar2excel(selectPlot=None, startDateTime=None, endDateTime=None):
     period_list = make_period_list(startDateTime,endDateTime)
 
     # get buoy database parameters
-    (fields,tables,fieldDesc,yLab,axis,colorStyle,fieldFactor) = get_buoyparam(selectPlot)
+    (fields,tables,fieldDesc,yLab,axis,colorStyle,fieldFactor, whereCond) = get_buoyparam(selectPlot)
 
     # get buoy scalar data
-    (nseries,series) = get_buoy_data(dbConfig, fields, tables, period_list)
+    (nseries,series) = get_buoy_data(dbConfig, fields, tables, period_list, whereCond)
 
     wb = Workbook()
 
