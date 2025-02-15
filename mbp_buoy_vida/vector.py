@@ -1,5 +1,4 @@
-#!/usr/bin/env python 
-# -*- coding: UTF-8 -*- 
+#!/usr/bin/env python3
 
 import matplotlib
 matplotlib.use('Agg')         # Force matplotlib to not use any Xwindows backend.
@@ -9,22 +8,21 @@ if __DBG == True:
     import cgitb
     cgitb.enable()            # Enable detailed and formated exception stacktrace logging
 
-from buoydef import *
-from buoyvida import *
+from .buoydef import *
+from .buoyvida import *
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import matplotlib.cm as cmx
-import string
+# import string
 
 from mbp_buoy_vida import config as DbConfig
 dbConfig = DbConfig.DbConfig()
 
 __all__ = ['vector']
 
-    
+
 def vector(selectHeights=None, startDateTime=None, endDateTime=None, scriptAbsPath='/'):
     global dbConfig
-
     all_heights = ['%d' % height for height in range(2,23)]
     def_heights = ['2', '5', '10', '15', '20']
     if selectHeights is None  or  startDateTime is None  or  endDateTime is None:
@@ -39,15 +37,15 @@ def vector(selectHeights=None, startDateTime=None, endDateTime=None, scriptAbsPa
 
     start_date = startDateTime.replace('T', ' ')
     end_date = endDateTime.replace('T', ' ')
-    cells = map(str, (np.asarray(map(int, heights)) - 2)) 
+    cells = list(map(str, (np.asarray(list(map(int, heights))) - 2)))
 
     if (start_date < end_date):
-        
+
         # make period list
         period_list = make_period_list(startDateTime, endDateTime)
 
-        if (len(period_list) <= 7*24*2):            
-        
+        if (len(period_list) <= 7*24*2):
+
             # get wind and waves data
             fields=['wind.vmspd', 'wind.vmdir', 'awac_waves.wave_height', 'awac_waves.mean_direction']
             tables=['wind', 'awac_waves']
@@ -67,7 +65,7 @@ def vector(selectHeights=None, startDateTime=None, endDateTime=None, scriptAbsPa
             vwaves = series[:,2] * np.sin((270. - series[:,3])*np.pi/180.)
 
             # get sea currents data
-            (current_E,current_N) = get_buoy_currents(dbConfig, period_list,cells)    
+            (current_E,current_N) = get_buoy_currents(dbConfig, period_list,cells)
 
             # plot wind vectors
             C = ['r']
@@ -85,7 +83,7 @@ def vector(selectHeights=None, startDateTime=None, endDateTime=None, scriptAbsPa
             uvec = np.vstack(current_E[0])
             uvec = uvec.T
             for i in range(1,len(current_E)):
-                uvec = np.vstack((uvec,current_E[i].T))                     
+                uvec = np.vstack((uvec,current_E[i].T))
             vvec = np.vstack(current_N[0])
             vvec = vvec.T
             for i in range(1,len(current_N)):
@@ -93,7 +91,7 @@ def vector(selectHeights=None, startDateTime=None, endDateTime=None, scriptAbsPa
             desc = ['%s' % height for height in heights]
             fieldDescCurr = ['Curr%s (%s m)' % (direction,height) for height in heights for direction in ['E','N']]
             values = range(len(uvec))
-            jet = cm = plt.get_cmap('jet') 
+            jet = cm = plt.get_cmap('jet')
             cNorm  = colors.Normalize(vmin=0, vmax=values[-1])
             scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=jet)
             colorVal = []
@@ -109,8 +107,8 @@ def vector(selectHeights=None, startDateTime=None, endDateTime=None, scriptAbsPa
 
             errmsg = 'Period length must be shorter than 7 days!'
             error = True
-                
-    else:    
+
+    else:
 
         errmsg = 'Start date and time must be before end date and time!'
         error = True
@@ -129,7 +127,7 @@ def vector(selectHeights=None, startDateTime=None, endDateTime=None, scriptAbsPa
     rvBuf += '</style>'
     rvBuf += '</head>'
     print
-    rvBuf += '<body>'    
+    rvBuf += '<body>'
     rvBuf += '<form method="get" name="main" id="main" action="%s/vector">' % (scriptAbsPath)
     rvBuf += '<h2>Wind, waves and sea currents from the oceanographic buoy Vida</h2>'
     rvBuf += '<hr>'
@@ -159,7 +157,7 @@ def vector(selectHeights=None, startDateTime=None, endDateTime=None, scriptAbsPa
     rvBuf += '<form method="get" action="%s/vector2excel" style="display:inline;">' % (scriptAbsPath)
     rvBuf += '<input type="hidden" name="startDateTime" value="%s">' % startDateTime
     rvBuf += '<input type="hidden" name="endDateTime" value="%s">' % endDateTime
-    rvBuf += '<input type="hidden" name="selectHeights" value="%s">' % string.join(heights, ",")
+    rvBuf += '<input type="hidden" name="selectHeights" value="%s">' % ",".join(heights)
     rvBuf += '<button type="submit">Download to Excel!</button>'
     rvBuf += '</form>'
     rvBuf += '&nbsp;'
@@ -220,8 +218,8 @@ def vector(selectHeights=None, startDateTime=None, endDateTime=None, scriptAbsPa
                 rvBuf += '<td align="right">%9.2f</td>' % series[i,j]
             for j in range(len(desc)):
                 rvBuf += '<td align="right">%9.2f</td>' % uvec[j,i]
-                rvBuf += '<td align="right">%9.2f</td>' % vvec[j,i]            
-            rvBuf += '</tr>'            
+                rvBuf += '<td align="right">%9.2f</td>' % vvec[j,i]
+            rvBuf += '</tr>'
         rvBuf += '</table>'
     rvBuf += '</body>'
     rvBuf += '</html>'

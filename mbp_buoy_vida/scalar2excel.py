@@ -1,5 +1,4 @@
-#!/usr/bin/env python 
-# -*- coding: UTF-8 -*- 
+#!/usr/bin/env python
 
 __DBG = False
 if __DBG == True:
@@ -8,12 +7,12 @@ if __DBG == True:
 
 import numpy as np
 
-from buoydef import *
-from buoyvida import *
+from .buoydef import *
+from .buoyvida import *
 
 from openpyxl import Workbook
 
-from StringIO import StringIO
+import io
 
 from mbp_buoy_vida import config as DbConfig
 dbConfig = DbConfig.DbConfig()
@@ -63,15 +62,15 @@ def scalar2excel(selectPlot=None, startDateTime=None, endDateTime=None):
     # for colletter in colletters:
     #     ws.column_dimensions[colletter].width = 18
 
-    start_date = period_list[0].strftime('%Y-%m-%d %H:%M:%S')    
-    end_date = period_list[-1].strftime('%Y-%m-%d %H:%M:%S')    
+    start_date = period_list[0].strftime('%Y-%m-%d %H:%M:%S')
+    end_date = period_list[-1].strftime('%Y-%m-%d %H:%M:%S')
 
     fieldDesc1 = [x.replace(" ","") for x in fieldDesc]
     wbname = "_".join(fieldDesc1) + "_" + ("%s_%s.xlsx" % (start_date,end_date))
     wbname = wbname.replace("-","")
     wbname = wbname.replace(":","")
-    wbname = wbname.replace(" ","_")    
+    wbname = wbname.replace(" ","_")
 
-    output = StringIO()
+    output = io.BytesIO()
     wb.save(output)
     return [wbname, output.getvalue()]

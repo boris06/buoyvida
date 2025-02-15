@@ -1,10 +1,10 @@
-# coding=utf-8
 from __future__ import print_function
 
 import cgi
 import cgitb
 import pickle
 from math import cos, pi
+import io
 
 from buoyvida import *
 
@@ -173,13 +173,13 @@ def make_traj_hodo_plot(curr_traj_e, curr_traj_n, zoom, buoy_position, curr_hodo
     plt.tight_layout()
 
     # write to file object and encode
-    f = cStringIO.StringIO()
+    f = io.BytesIO()
     plt.savefig(f, dpi=120, format='png')
     f.seek(0)
 
     img = f.read()
 
-    encoded = base64.b64encode(img)
+    encoded = base64.b64encode(img).decode()
 
     return encoded
 

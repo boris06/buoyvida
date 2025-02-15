@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: UTF-8 -*-
 
 import pickle
 from math import cos, pi
@@ -18,7 +17,7 @@ if __DBG == True:
 
     cgitb.enable()  # Enable detailed and formated exception stacktrace logging
 
-from buoyvida import *
+from .buoyvida import *
 
 # from mbp_buoy_vida import config as DbConfig
 from mbp_buoy_vida import config as DbConfig
@@ -84,6 +83,8 @@ def make_traj_hodo_plot(scriptsRootDir, curr_traj_e, curr_traj_n, zoom, buoy_pos
     # the basemap of the part of the Gulf of Trieste was previously saved to pickle
     tmpFileName = "%s/%s" % (scriptsRootDir, "buoy.trajectory.pickle")
     m2 = pickle.load(open(tmpFileName, 'rb'))  # load here the above pickle
+    # m2 = pickle.load(open(tmpFileName, 'rb'), encoding='latin1')
+    # m2 = pickle.load(open(tmpFileName, 'rb'), encoding='iso-8859-1')
 
     m2.ax = ax1
     # draw coastlines, country boundaries, fill continents.
@@ -193,13 +194,13 @@ def make_traj_hodo_plot(scriptsRootDir, curr_traj_e, curr_traj_n, zoom, buoy_pos
     plt.tight_layout()
 
     # write to file object and encode
-    f = cStringIO.StringIO()
+    f = io.BytesIO()
     plt.savefig(f, dpi=120, format='png')
     f.seek(0)
 
     img = f.read()
 
-    encoded = base64.b64encode(img)
+    encoded = base64.b64encode(img).decode()
 
     return encoded
 
@@ -211,7 +212,7 @@ def trajectory_hodograph(scriptsRootDir, endDate=None, endTime=None, selectHeigh
 
     all_heights = ['%d' % height for height in range(2, 23)]
     all_durations = ['%d' % duration for duration in [6, 12, 24]]
-    all_cells = map(str, (np.asarray(map(int, all_heights)) - 2))
+    all_cells = list(map(str, (np.asarray(list(map(int, all_heights))) - 2)))
     all_options = ["at the start of trajectory", "at the middle of trajectory", "at the end of trajectory"]
 
     # check if user has entered the parameters for trajectory, otherwise set the default ones
@@ -305,11 +306,11 @@ def trajectory_hodograph(scriptsRootDir, endDate=None, endTime=None, selectHeigh
     rvBuf += '<tr>'
     tmpFileName = "%s/%s" % (scriptsRootDir, "natcom_slovenia_si.png")
     with open(tmpFileName, "rb") as image_file:
-        encoded_string = base64.b64encode(image_file.read())
+        encoded_string = base64.b64encode(image_file.read()).decode()
     rvBuf1 = '<div align="left"><img style="height:140px;" src=\"data:image/png;base64,' + encoded_string + "\" /></div>"
     tmpFileName = "%s/%s" % (scriptsRootDir, "ioc_si_national_committee_slovenia_si.png")
     with open(tmpFileName, "rb") as image_file:
-        encoded_string = base64.b64encode(image_file.read())
+        encoded_string = base64.b64encode(image_file.read()).decode()
     rvBuf2 = '<div align="left"><img style="height:140px;" src=\"data:image/png;base64,' + encoded_string + "\" /></div>"
     rvBuf += '<th>' + rvBuf1 + '</th>'
     rvBuf += '<th>' + rvBuf2 + '</th>'
@@ -322,7 +323,7 @@ def trajectory_hodograph(scriptsRootDir, endDate=None, endTime=None, selectHeigh
     rvBuf += '<th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>'
     tmpFileName = "%s/%s" % (scriptsRootDir, "logo_MBP_Pantone_slo.png")
     with open(tmpFileName, "rb") as image_file:
-        encoded_string = base64.b64encode(image_file.read())
+        encoded_string = base64.b64encode(image_file.read()).decode()
     rvBuf3 = '<div align="left"><img style="height:75px;" src=\"data:image/png;base64,' + encoded_string + "\" /></div>"
     rvBuf += '<th>' + rvBuf3 + '</th>'
     rvBuf += '</tr>'

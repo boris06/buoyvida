@@ -1,5 +1,4 @@
-#!/usr/bin/env python 
-# -*- coding: UTF-8 -*- 
+#!/usr/bin/env python
 
 __DBG = False
 if __DBG == True:
@@ -8,14 +7,13 @@ if __DBG == True:
 
 import numpy as np
 
-from buoydef import *
-from buoyvida import *
+from .buoydef import *
+from .buoyvida import *
 
 from openpyxl import Workbook
-from openpyxl.cell import get_column_letter
+# from openpyxl.utils import get_column_letter
 
-import string
-from StringIO import StringIO
+import io
 
 from mbp_buoy_vida import config as DbConfig
 dbConfig = DbConfig.DbConfig()
@@ -38,7 +36,9 @@ def vector2excel(selectHeights=None, startDateTime=None, endDateTime=None):
     start_date = startDateTime.replace('T', ' ')
     end_date = endDateTime.replace('T', ' ')
 
-    cells = map(str, (np.asarray(map(int, heights)) - 2))
+    print(f"list(map(int, heights)) = [{list(map(int, heights))}]")
+    print(f"np.asarray(list(map(int, heights))) = [{np.asarray(list(map(int, heights)))}]")
+    cells = list(map(str, (np.asarray(list(map(int, heights))) - 2)))
 
     # make period list
     period_list = make_period_list(startDateTime, endDateTime)
@@ -58,12 +58,12 @@ def vector2excel(selectHeights=None, startDateTime=None, endDateTime=None):
     uvec = np.vstack(current_E[0])
     uvec = uvec.T
     for i in range(1,len(current_E)):
-        uvec = np.vstack((uvec,current_E[i].T))                     
+        uvec = np.vstack((uvec,current_E[i].T))
     vvec = np.vstack(current_N[0])
     vvec = vvec.T
     for i in range(1,len(current_N)):
         vvec = np.vstack((vvec,current_N[i].T))
-        
+
     wb = Workbook()
 
     #ws = wb.active       # NOTE: not available in ver 1.7
@@ -98,16 +98,16 @@ def vector2excel(selectHeights=None, startDateTime=None, endDateTime=None):
 
     # ???
     # for i in range(1+nseries+len(cells)*2):
-    #    ws.column_dimensions[get_column_letter(i+1)].width = 18 
+    #    ws.column_dimensions[get_column_letter(i+1)].width = 18
 
-    start_date = period_list[0].strftime('%Y-%m-%d %H:%M:%S')    
-    end_date = period_list[-1].strftime('%Y-%m-%d %H:%M:%S')    
+    start_date = period_list[0].strftime('%Y-%m-%d %H:%M:%S')
+    end_date = period_list[-1].strftime('%Y-%m-%d %H:%M:%S')
 
     wbname = 'wind_waves_currents_' + ("%s_%s.xlsx" % (start_date,end_date))
     wbname = wbname.replace("-","")
     wbname = wbname.replace(":","")
-    wbname = wbname.replace(" ","_")    
+    wbname = wbname.replace(" ","_")
 
-    output = StringIO()
+    output = io.BytesIO()
     wb.save(output)
     return [wbname, output.getvalue()]

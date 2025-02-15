@@ -1,25 +1,23 @@
-# -*- coding: UTF-8 -*- 
-
 from datetime import datetime, timedelta
 import MySQLdb as mdb
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.dates import date2num
 from matplotlib.dates import DateFormatter, HourLocator, DayLocator
-import cStringIO
+import io
 import base64
 
-from mbp_buoy_vida import config
+# from mbp_buoy_vida import config
 
 def get_buoy_currents(dbConfig, period_list,cells):
     con = mdb.connect(dbConfig.host, dbConfig.username, dbConfig.password, dbConfig.db)
-    con.ping(True)    
+    con.ping(True)
     with con:
         cur = con.cursor()
         uarr = []
         varr = []
         for cell in (cells):
-            con.ping(True)    
+            con.ping(True)
             cur = con.cursor()
             cur.execute("SELECT profile.datestart, profile.dateend, awac_currents.current_E, awac_currents.current_N, awac_currents.cell_no "
                         "FROM awac_currents RIGHT JOIN profile ON awac_currents.pid = profile.pid "
@@ -28,7 +26,7 @@ def get_buoy_currents(dbConfig, period_list,cells):
             date_end = []
             current_E = np.zeros(cur.rowcount)
             current_N = np.zeros(cur.rowcount)
-            for i in range(cur.rowcount):            
+            for i in range(cur.rowcount):
                 row = cur.fetchone()
                 date_start.append(row[0])
                 date_end.append(row[1])
@@ -51,7 +49,7 @@ def get_buoy_currents(dbConfig, period_list,cells):
 
 def get_buoy_data(dbConfig, fields,tables,period_list, whereCond=""):
     con = mdb.connect(dbConfig.host, dbConfig.username, dbConfig.password, dbConfig.db)
-    con.ping(True)    
+    con.ping(True)
     with con:
         cur = con.cursor()
         fields = ', '.join(fields)
@@ -80,7 +78,7 @@ def get_buoy_data(dbConfig, fields,tables,period_list, whereCond=""):
     series_new = np.zeros((len(period_list),nseries))
     series_new[:] = np.NAN
     series_new[ind] = series
-    
+
     return (nseries,series_new)
 
 def make_period_list(startDateTime,endDateTime):
@@ -88,7 +86,7 @@ def make_period_list(startDateTime,endDateTime):
     tm_s = tm_s - timedelta(minutes=tm_s.minute % 30,
                             seconds=tm_s.second,
                             microseconds=tm_s.microsecond)
-    tm_e = datetime.strptime(endDateTime, "%Y-%m-%dT%H:%M:%S") 
+    tm_e = datetime.strptime(endDateTime, "%Y-%m-%dT%H:%M:%S")
     tm_e = tm_e - timedelta(minutes=tm_e.minute % 30,
                             seconds=tm_e.second,
                             microseconds=tm_e.microsecond)
@@ -107,7 +105,7 @@ def make_vector_plot(period_list,uvec,vvec,C,desc,ref,keytext,ylabel,yrot,keyxpo
     else:
         fig_height = 1.5*len(desc)
         fig, ax = plt.subplots(figsize=(11, fig_height))
-	all_missing = False
+        all_missing = False
     if np.isnan(uvec).all() or np.isnan(vvec).all():
         all_missing = True
 
@@ -132,12 +130,12 @@ def make_vector_plot(period_list,uvec,vvec,C,desc,ref,keytext,ylabel,yrot,keyxpo
         qw = plt.quiverkey(q, keyxpos, keyypos, ref,
                           keytext % ref,color=C,
                           labelpos='W', coordinates='axes', fontproperties={'size':14})
-	plt.ylabel(ylabel, fontsize=11)
+        plt.ylabel(ylabel, fontsize=11)
     plt.yticks(np.arange(len(desc)), desc, rotation=yrot)
 
     #ax.get_yaxis().set_visible(False)
-    ax.xaxis_date()    
-    
+    ax.xaxis_date()
+
     _ = plt.xticks(rotation=0)
 
     date_format = "%Y-%m-%d %H:%M"
@@ -163,18 +161,18 @@ def make_vector_plot(period_list,uvec,vvec,C,desc,ref,keytext,ylabel,yrot,keyxpo
     plt.tick_params(axis='both', which='minor', labelsize=10)
 
     #write to file object
-    f = cStringIO.StringIO()
+    f = io.BytesIO()
     plt.savefig(f, dpi=120, format='png')
     f.seek(0)
 
     img = f.read()
 
-    encoded = base64.b64encode(img)    
-    
+    encoded = base64.b64encode(img).decode()
+
     error = False
 
-    #plt.show()    
-    
+    #plt.show()
+
     return encoded
 
 def make_scalar_plot(period_list,series,fieldDesc,yLab,axis,colorStyle,fieldFactor):
@@ -183,7 +181,7 @@ def make_scalar_plot(period_list,series,fieldDesc,yLab,axis,colorStyle,fieldFact
 
     ylabelColor = [cs[0] for cs in colorStyle]
     linewidth=2
-    
+
     fig, ax1 = plt.subplots()
     t = date2num(period_list)
     isax2 = False
@@ -200,7 +198,7 @@ def make_scalar_plot(period_list,series,fieldDesc,yLab,axis,colorStyle,fieldFact
     for tl in ax1.get_yticklabels():
         tl.set_color(ylabelColor[0])
 
-    if isax2 == True:  
+    if isax2 == True:
         ax2 = ax1.twinx()
         for i in range(nseries):
             if (axis[i] == 'right'):
@@ -211,10 +209,10 @@ def make_scalar_plot(period_list,series,fieldDesc,yLab,axis,colorStyle,fieldFact
         ax2.set_ylabel(yLab[ilab2], color=ylabelColor[-1])
         for tl in ax2.get_yticklabels():
             tl.set_color(ylabelColor[-1])
-            
+
     ax1.set_xlabel('')
 
-    ax1.xaxis_date()    
+    ax1.xaxis_date()
 
     _ = plt.xticks(rotation=0)
 
@@ -244,15 +242,15 @@ def make_scalar_plot(period_list,series,fieldDesc,yLab,axis,colorStyle,fieldFact
 
     for tick in ax1.xaxis.get_major_ticks():
         tick.label.set_fontsize(11)
-        tick.set_pad(15.)    
+        tick.set_pad(15.)
     for tick in ax1.xaxis.get_minor_ticks():
-        tick.label.set_fontsize(10) 
-    
+        tick.label.set_fontsize(10)
+
     for tick in ax1.yaxis.get_major_ticks():
         tick.label.set_fontsize(11)
     for tick in ax1.yaxis.get_minor_ticks():
-        tick.label.set_fontsize(10) 
-    
+        tick.label.set_fontsize(10)
+
 
     box1 = ax1.get_position()
     ax1.set_position([box1.x0, box1.y0 + box1.height * 0.15,
@@ -268,11 +266,11 @@ def make_scalar_plot(period_list,series,fieldDesc,yLab,axis,colorStyle,fieldFact
                    prop={'size':10},
                    handlelength=3,numpoints=4)
 
-    f = cStringIO.StringIO()
+    f = io.BytesIO()
     plt.savefig(f, dpi=120, format='png')
     f.seek(0)
     img = f.read()
-    encoded = base64.b64encode(img)    
+    encoded = base64.b64encode(img).decode()
 
     #plt.show()
 

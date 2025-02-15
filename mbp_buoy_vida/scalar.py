@@ -11,8 +11,8 @@ if __DBG == True:
 
 from datetime import datetime, timedelta
 
-from buoydef import *
-from buoyvida import *
+from .buoydef import *
+from .buoyvida import *
 
 from mbp_buoy_vida import config as DbConfig
 dbConfig = DbConfig.DbConfig()
@@ -35,33 +35,33 @@ def scalar(selectPlot=None, startDateTime=None, endDateTime=None, scriptAbsPath=
     end_date = endDateTime.replace('T', ' ')
 
     if (start_date < end_date):
-        
+
         # make period list
         period_list = make_period_list(startDateTime,endDateTime)
 
-        if (len(period_list) <= 7*24*2):        
-        
+        if (len(period_list) <= 7*24*2):
+
             # get buoy database parameters
             (fields,tables,fieldDesc,yLab,axis,colorStyle,fieldFactor, whereCond) = get_buoyparam(selectPlot)
-                
+
             # get buoy scalar data
             (nseries,series) = get_buoy_data(dbConfig, fields,tables,period_list, whereCond)
 
             # plot scalar data
             encoded = make_scalar_plot(period_list,series,fieldDesc,yLab,axis,colorStyle,fieldFactor)
-        
+
             error = False
 
         else:
 
             errmsg = 'Period length must be shorter than 7 days!'
             error = True
-                
-    else:    
+
+    else:
 
         errmsg = 'Start date and time must be before end date and time!'
         error = True
-        
+
     rvBuf += "<!DOCTYPE html>"
     rvBuf += "<html>"
     print
@@ -131,7 +131,7 @@ def scalar(selectPlot=None, startDateTime=None, endDateTime=None, scriptAbsPath=
         rvBuf += '  <tr>'
         rvBuf += '    <th>Date and time</th>'
         for i in range(nseries):
-            rvBuf += '    <th>%s</th>' % fieldDesc[i]		
+            rvBuf += '    <th>%s</th>' % fieldDesc[i]
         rvBuf += '  </tr>'
         for i in range(len(period_list)):
             rvBuf += '<tr>'

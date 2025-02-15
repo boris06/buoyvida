@@ -3,7 +3,7 @@
 
 from cgi import parse_qs
 import sys
-import string
+# import string
 import os
 import magic
 
@@ -54,7 +54,7 @@ def getVector(environ):
     qs = parse_qs(environ['QUERY_STRING'])
     selectHeights = qs.get("selectHeights", [None])
     try:
-        selectHeights = string.join(selectHeights, ",")
+        selectHeights = ",".join(selectHeights)
     except:
         pass
     rvBuf = vector.vector(
@@ -72,7 +72,7 @@ def getVector2Excel(environ):
     qs = parse_qs(environ['QUERY_STRING'])
     selectHeights = qs.get("selectHeights", [None])
     try:
-        selectHeights = string.join(selectHeights, ",")
+        selectHeights = ",".join(selectHeights)
     except:
         pass
     [filename, rvBuf] = vector2excel.vector2excel(
@@ -86,13 +86,13 @@ def getVector2Excel(environ):
 def getTrajectoryHodograph(environ):
     from mbp_buoy_vida import trajectory_hodograph
     request_script_url = environ["SCRIPT_NAME"]
-    scriptsRootDir = "%s/%s" % (environ["CONTEXT_DOCUMENT_ROOT"], _mbp_module_name)
+    scriptsRootDir = "%s/%s" % ('.', _mbp_module_name)
     qs = parse_qs(environ['QUERY_STRING'])
 
     formOp = trajectory_hodograph.FORM_OP_NONE
-    if qs.has_key("getTrajectory"):
+    if "getTrajectory" in qs.keys():
         formOp = trajectory_hodograph.FORM_OP_GET_TRAJECTORY
-    elif qs.has_key("getHodograph"):
+    elif "getHodograph" in qs.keys():
         formOp = trajectory_hodograph.FORM_OP_GET_HODOBRAPH
 
     rvBuf = trajectory_hodograph.trajectory_hodograph(
@@ -145,11 +145,14 @@ def application(environ, start_response):
         response_headers.append(("Content-type", "text/html; charset=utf-8"))
     else:
         req_path = environ['PATH_INFO']
+        if req_path == "/":
+            req_path = "/index.html"
         if os.path.exists(f"./{req_path}") and os.path.isdir(f"./{req_path}"):
             err_message = f"Directory listing is not allowed!"
             print(f"ERROR: {err_message} Request for {req_path} denied, HTTP.404 is going to be returned.")
             status = "404 Not Found"
-            response_body = err_message
+            response_body = ' '
+            response_headers.append(("Content-type", "text/html"))
         elif os.path.exists(f"./{req_path}") and os.path.isfile(f"./{req_path}"):
             with open(f"./{req_path}", 'rb') as file:
                 response_body = file.read()
@@ -188,7 +191,7 @@ Response:
 
     if is_response_text:
         print("----")
-        print(f"{response_body}")
+        print(f"{response_body if len(response_body) < 100 else f'{response_body[:96]} ...'}")
     else:
         print(f"---- type: {response_type} ----")
     print("----")
@@ -234,5 +237,5 @@ Usage:
 
     print(f"Starting a web server on <localhost>:{tcp_port} ...")
     from wsgiref.simple_server import make_server
-    with make_server('localhost', tcp_port, application) as httpd:
+    with make_server('127.0.0.1', tcp_port, application) as httpd:
         httpd.serve_forever()

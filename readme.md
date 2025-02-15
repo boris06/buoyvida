@@ -38,8 +38,8 @@ http://localhost:8000/cgi-bin/buoy_vector.py
 
 
 
-# Prerequisites
-- Python module `python-magic`
-- On MacOS:
-  - `brew install libjpeg`
-  - `brew install libmagic`
+## **TODO** - Deployment on `Ubuntu 18.04 LTS`
+
+```bash
+apt install -y python3-magic python3-matplotlib python3-mysqldb python3-openpyxl python3-mpltoolkits.basemap
+```

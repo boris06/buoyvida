@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*- 
-
 buoySelDesc = ['Wind Speed and Gusts',
                'Air Temperature and Humidity',
                'Sea Temperature and Salinity',
@@ -151,8 +149,8 @@ buoyYAxisLabel = ['Speed',
                   'Concentration',
                   'PAR']
 
-yLabDict = dict(zip(buoyDBFields, buoyYAxisLabel))    
-yLabUnit = dict(zip(buoyDBFields, buoyFieldsUnit))    
+yLabDict = dict(zip(buoyDBFields, buoyYAxisLabel))
+yLabUnit = dict(zip(buoyDBFields, buoyFieldsUnit))
 
 def get_buoyparam(selectPlot):
 
@@ -168,9 +166,8 @@ def get_buoyparam(selectPlot):
 
     axis = buoySelAxis[selectPlot]
 
-    colorStyle = buoySelColorStyle[selectPlot]    
-       
+    colorStyle = buoySelColorStyle[selectPlot]
+
     fieldFactor = [factorDict[x] for x in fields]
 
     return (fields,tables,fieldDesc,yLab,axis,colorStyle,fieldFactor, whereCond)
-
