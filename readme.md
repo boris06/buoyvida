@@ -35,3 +35,11 @@ http://localhost:8000/cgi-bin/buoy_vector.py
 
 * on the localhost: http://website_running_python_cgi/cgi-bin/buoy_scalar.py  
 http://localhost:8000/cgi-bin/buoy_vector.py
+
+
+
+# Prerequisites
+- Python module `python-magic`
+- On MacOS:
+  - `brew install libjpeg`
+  - `brew install libmagic`
