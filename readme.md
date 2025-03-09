@@ -43,3 +43,4 @@ http://localhost:8000/cgi-bin/buoy_vector.py
 ```bash
 apt install -y python3-magic python3-matplotlib python3-mysqldb python3-openpyxl python3-mpltoolkits.basemap
 ```
+
