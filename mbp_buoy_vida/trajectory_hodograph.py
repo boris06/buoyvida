@@ -2,6 +2,7 @@
 
 import pickle
 from math import cos, pi
+from dateutil.parser import parse as date_parse
 
 import matplotlib
 
@@ -227,7 +228,7 @@ def trajectory_hodograph(scriptsRootDir, endDate=None, endTime=None, selectHeigh
     endDateTime = endDate + "T" + endTime + ":00"
 
     duration = int(selectDuration.split(" ")[0])
-    startDateTime = (datetime.strptime(endDateTime, "%Y-%m-%dT%H:%M:%S") - timedelta(hours=duration)).strftime(
+    startDateTime = (date_parse(endDateTime) - timedelta(hours=duration)).strftime(
         '%Y-%m-%dT%H:%M:%S')
     start_date = startDateTime.replace('T', ' ')
     end_date = endDateTime.replace('T', ' ')
@@ -285,15 +286,24 @@ def trajectory_hodograph(scriptsRootDir, endDate=None, endTime=None, selectHeigh
     rvBuf += '<html>'
 
     # head
-    rvBuf += '<head>'
-    rvBuf += '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'
-    rvBuf += '<title>Buoy trajectory and hodograph</title>'
-    rvBuf += '<style>'
-    rvBuf += 'h2 {'
-    rvBuf += '    text-align: center;'
-    rvBuf += '}'
-    rvBuf += '</style>'
-    rvBuf += '</head>'
+    rvBuf += """
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Buoy trajectory and hodograph</title>
+<link href="//fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic,700,700italic,800,800italic" rel="stylesheet" type="text/css">
+<style>
+  body {
+    font-family: "Open Sans";
+  }
+  h2 {
+    text-align: center;
+  }
+  table tbody {
+    font-size: 0.7em;
+  }
+</style>
+</head>
+"""
 
     # body
     rvBuf += '<body>'
@@ -490,7 +500,7 @@ def trajectory_hodograph(scriptsRootDir, endDate=None, endTime=None, selectHeigh
     rvBuf += '</td>'
     rvBuf += '<td>'
     rvBuf += '<h4 lang="en">The vertical distribution of currents on the buoy Vida along the water column at %s. The current velocity vectors for which the magnitudes (cm/s) are determined by the radii of circles are attributed with the height (m) above the bottom.</h4>' \
-             % (datetime.strptime(selectDateTime, '%d.%m.%Y %H:%M').strftime('%m/%d/%Y %H:%M'))
+             % (date_parse(selectDateTime).strftime('%m/%d/%Y %H:%M'))
     rvBuf += '</td>'
     rvBuf += '</tr>'
     rvBuf += '</table>'

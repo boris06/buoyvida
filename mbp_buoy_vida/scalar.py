@@ -64,19 +64,34 @@ def scalar(selectPlot=None, startDateTime=None, endDateTime=None, scriptAbsPath=
 
     rvBuf += "<!DOCTYPE html>"
     rvBuf += "<html>"
-    print
-    rvBuf += '<head>'
-    rvBuf += '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'
-    rvBuf += '<title>Buoy scalar multi-plot</title>'
-    rvBuf += '<style>'
-    rvBuf += 'h2 {'
-    rvBuf += '    text-align: center;'
-    rvBuf += '}'
-    rvBuf += '</style>'
-    rvBuf += '</head>'
-    print
+
+    rvBuf += """
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Buoy scalar multi-plot</title>
+<link href="//fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic,700,700italic,800,800italic" rel="stylesheet" type="text/css">
+<style>
+  body {
+    font-family: "Open Sans";
+  }
+  h2 {
+    text-align: center;
+  }
+  table {
+    border-collapse: collapse;
+    border: 1px solid black;
+  }
+  table tbody {
+    font-size: 0.7em;
+  }
+  tbody tr:nth-child(odd) {
+    background-color: lightgray;bl
+  }
+</style>
+</head>
+"""
+
     rvBuf += '<body>'
-    print
     rvBuf += '<form method="get" action="%s/scalar">' % (scriptAbsPath)
     rvBuf += '<h2>Data from the oceanographic buoy Vida</h2>'
     rvBuf += '<h2 style="color:blue">%s</h2>' % selectPlot
@@ -128,17 +143,21 @@ def scalar(selectPlot=None, startDateTime=None, endDateTime=None, scriptAbsPath=
         rvBuf += '<hr>'
         rvBuf += '<br>'
         rvBuf += '<table border="1" style="width:50%" align="center">'
+        rvBuf += '<thead>'
         rvBuf += '  <tr>'
         rvBuf += '    <th>Date and time</th>'
         for i in range(nseries):
             rvBuf += '    <th>%s</th>' % fieldDesc[i]
         rvBuf += '  </tr>'
+        rvBuf += '</thead>'
+        rvBuf += '<tbody>'
         for i in range(len(period_list)):
             rvBuf += '<tr>'
             rvBuf += '<td>%s</td>' % period_list[i].strftime('%Y-%m-%d %H:%M')
             for j in range(nseries):
                 rvBuf += '<td align="right">%9.2f</td>' % series[i,j]
             rvBuf += '</tr>'
+        rvBuf += '</tbody>'
         rvBuf += '</table>'
     rvBuf += '</body>'
     rvBuf += '</html>'

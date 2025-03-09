@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from dateutil.parser import parse as date_parse
 import MySQLdb as mdb
 import numpy as np
 import matplotlib.pyplot as plt
@@ -82,11 +83,11 @@ def get_buoy_data(dbConfig, fields,tables,period_list, whereCond=""):
     return (nseries,series_new)
 
 def make_period_list(startDateTime,endDateTime):
-    tm_s = datetime.strptime(startDateTime, "%Y-%m-%dT%H:%M:%S")
+    tm_s = date_parse(startDateTime)
     tm_s = tm_s - timedelta(minutes=tm_s.minute % 30,
                             seconds=tm_s.second,
                             microseconds=tm_s.microsecond)
-    tm_e = datetime.strptime(endDateTime, "%Y-%m-%dT%H:%M:%S")
+    tm_e = date_parse(endDateTime)
     tm_e = tm_e - timedelta(minutes=tm_e.minute % 30,
                             seconds=tm_e.second,
                             microseconds=tm_e.microsecond)
@@ -181,6 +182,9 @@ def make_scalar_plot(period_list,series,fieldDesc,yLab,axis,colorStyle,fieldFact
 
     ylabelColor = [cs[0] for cs in colorStyle]
     linewidth=2
+    gridwidth=0.5
+    grid_linestyle='--'
+    plot_linestyle=':'
 
     fig, ax1 = plt.subplots()
     t = date2num(period_list)
@@ -189,7 +193,7 @@ def make_scalar_plot(period_list,series,fieldDesc,yLab,axis,colorStyle,fieldFact
         if fieldFactor[i] != 1.0:
             series[:, i] *= fieldFactor[i]
         if (axis[i] == 'left'):
-            ax1.plot(t, series[:, i], colorStyle[i], linewidth=2, label=fieldDesc[i])
+            ax1.plot(t, series[:, i], colorStyle[i], linewidth=linewidth, label=fieldDesc[i])
         else:
             isax2 = True
 
@@ -202,7 +206,7 @@ def make_scalar_plot(period_list,series,fieldDesc,yLab,axis,colorStyle,fieldFact
         ax2 = ax1.twinx()
         for i in range(nseries):
             if (axis[i] == 'right'):
-                ax2.plot(t,series[:,i],colorStyle[i],linewidth=2,label=fieldDesc[i])
+                ax2.plot(t,series[:,i],colorStyle[i],linewidth=linewidth,label=fieldDesc[i])
                 ilab2 = i
             else:
                 pass
@@ -233,9 +237,9 @@ def make_scalar_plot(period_list,series,fieldDesc,yLab,axis,colorStyle,fieldFact
     plt.gca().xaxis.set_minor_formatter( DateFormatter('%H') )
 
     plt.gca().xaxis.grid(b=True, which=u'both')
-    plt.gca().yaxis.grid(b=True, which=u'both',color=ylabelColor[1],linewidth=1)
-    ax1.xaxis.grid(b=True, which=u'both',linewidth=1)
-    ax1.yaxis.grid(b=True, which=u'both',color=ylabelColor[0],linewidth=1)
+    plt.gca().yaxis.grid(b=True, which=u'both', color=ylabelColor[-1], linewidth=gridwidth, alpha=1, linestyle=plot_linestyle)
+    ax1.xaxis.grid(b=True, which=u'both', linewidth=gridwidth, linestyle=grid_linestyle)
+    ax1.yaxis.grid(b=True, which=u'both', color=ylabelColor[0], linewidth=gridwidth, alpha=1, linestyle=plot_linestyle)
 
     plt.tick_params(axis='both', which='major', labelsize=11)
     plt.tick_params(axis='both', which='minor', labelsize=10)

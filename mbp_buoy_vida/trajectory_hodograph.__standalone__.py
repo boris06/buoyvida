@@ -5,6 +5,7 @@ import cgitb
 import pickle
 from math import cos, pi
 import io
+from dateutil.parser import parse as date_parse
 
 from buoyvida import *
 
@@ -213,8 +214,7 @@ else:
     selectBuoyPosition = form["selectBuoyPosition"].value
 
 duration = int(selectDuration.split(" ")[0])
-startDateTime = (datetime.strptime(endDateTime, "%Y-%m-%dT%H:%M:%S") - timedelta(hours=duration)).strftime(
-    '%Y-%m-%dT%H:%M:%S')
+startDateTime = (date_parse(endDateTime) - timedelta(hours=duration)).strftime('%Y-%m-%dT%H:%M:%S')
 start_date = startDateTime.replace('T', ' ')
 end_date = endDateTime.replace('T', ' ')
 selectCell = int(selectHeight.split(" ")[0]) - 2
@@ -455,7 +455,7 @@ rvBuf += '<div style="width:200px"></div>'
 rvBuf += '</td>'
 rvBuf += '<td>'
 rvBuf += '<h4 lang="en">The vertical distribution of currents on the buoy Vida along the water column at %s. The current velocity vectors for which the magnitudes (cm/s) are determined by the radii of circles are attributed with the height (m) above the bottom.</h4>' \
-         % (datetime.strptime(selectDateTime, '%d.%m.%Y %H:%M').strftime('%m/%d/%Y %H:%M'))
+         % (date_parse(selectDateTime).strftime('%m/%d/%Y %H:%M'))
 rvBuf += '</td>'
 rvBuf += '</tr>'
 rvBuf += '</table>'

@@ -85,8 +85,10 @@ def getVector2Excel(environ):
 
 def getTrajectoryHodograph(environ):
     from mbp_buoy_vida import trajectory_hodograph
-    request_script_url = environ["SCRIPT_NAME"]
-    scriptsRootDir = "%s/%s" % ('.', _mbp_module_name)
+    import pathlib
+    scriptUrl = environ["SCRIPT_NAME"]
+    thisFileDirectoryPath = pathlib.Path(__file__).parent.resolve();
+    mbpModuleDirectoryPath = "%s/%s" % (thisFileDirectoryPath, _mbp_module_name)
     qs = parse_qs(environ['QUERY_STRING'])
 
     formOp = trajectory_hodograph.FORM_OP_NONE
@@ -96,7 +98,7 @@ def getTrajectoryHodograph(environ):
         formOp = trajectory_hodograph.FORM_OP_GET_HODOBRAPH
 
     rvBuf = trajectory_hodograph.trajectory_hodograph(
-        scriptsRootDir = scriptsRootDir,
+        scriptsRootDir = mbpModuleDirectoryPath,
         endDate = qs.get("endDate", [None])[0],
         endTime = qs.get("endTime", [None])[0],
         selectHeight = qs.get("selectHeight", [None])[0],
@@ -109,7 +111,7 @@ def getTrajectoryHodograph(environ):
         endDateHidden = qs.get("endDateHidden", [None])[0],
         endTimeHidden = qs.get("endTimeHidden", [None])[0],
         durationHidden = qs.get("durationHidden", [None])[0],
-        scriptAbsUrl = request_script_url
+        scriptAbsUrl = scriptUrl
         )
     return rvBuf
 
@@ -144,31 +146,43 @@ def application(environ, start_response):
         response_body = getTrajectoryHodograph(environ)
         response_headers.append(("Content-type", "text/html; charset=utf-8"))
     else:
-        req_path = environ['PATH_INFO']
-        if req_path == "/":
-            req_path = "/index.html"
-        if os.path.exists(f"./{req_path}") and os.path.isdir(f"./{req_path}"):
+        import pathlib
+        reqPath = environ['PATH_INFO']
+        reqPath = reqPath[1:] if reqPath.startswith('/') else reqPath
+        thisDirPath = pathlib.Path(__file__).parent.resolve();
+        fullReqPath = os.path.join(thisDirPath, reqPath[:])
+        print(f"thisDirPath = '{thisDirPath}' / reqPath = '{reqPath}' / fullReqPath = '{fullReqPath}'")
+        if reqPath == "/":
+            reqPath = "/index.html"
+        if  os.path.exists(fullReqPath) and os.path.isdir(fullReqPath):
             err_message = f"Directory listing is not allowed!"
-            print(f"ERROR: {err_message} Request for {req_path} denied, HTTP.404 is going to be returned.")
+            print(f"ERROR: {err_message} Request for {reqPath} denied, HTTP.404 is going to be returned.")
             status = "404 Not Found"
-            response_body = ' '
+            response_body = b' '
             response_headers.append(("Content-type", "text/html"))
-        elif os.path.exists(f"./{req_path}") and os.path.isfile(f"./{req_path}"):
-            with open(f"./{req_path}", 'rb') as file:
-                response_body = file.read()
-            if len(response_body) > 0:
-                mime_type = magic.from_buffer(response_body, mime=True)
-            else:
-                if req_path.endswith(".html") or req_path.endswith(".htm"):
-                    mime_type = "text/html"
+        elif os.path.exists(fullReqPath) and os.path.isfile(fullReqPath):
+            mime_type = "text/plain"
+            fileExtension = fullReqPath[fullReqPath.rfind('.'):]
+            if fileExtension.lower() in ['.jpg', '.gif', '.ico', '.png', '.jpeg', '.html', '.htm', '.txt']:
+                print(f"Returning file with extension '{fileExtension}' - fullReqPath='{fullReqPath}'")
+                with open(fullReqPath, 'rb') as file:
+                    response_body = file.read()
+                if len(response_body) > 0:
+                    mime_type = magic.from_buffer(response_body, mime=True)
+                    print(f"mime_type = '{mime_type}'")
                 else:
-                    mime_type = "text/plain"
-                response_body = '';
+                    if reqPath.endswith(".html") or reqPath.endswith(".htm"):
+                        mime_type = "text/html"
+                    response_body = b'';
+            else:
+                print(f"Returning files with extension '{fileExtension}' is NOT allowed - fullReqPath='{fullReqPath}'")
+                status = "404 Not Found"
+                response_body = b' '
             response_headers.append(("Content-type", mime_type))
         else:
-            print(f"!!! NOT FOUND {req_path} !!!")
+            print(f"!!! File NOT FOUND {fullReqPath} !!!")
             status = "404 Not Found"
-            response_body = "Not Found"
+            response_body = b' '
             response_headers.append(('Content-Type', 'text/plain'))
     start_response(status, response_headers)
     response_type = list(filter(lambda h : h[0].lower() == "content-type"  , response_headers))[0][1]
@@ -186,8 +200,7 @@ HTTP_ACCEPT_ENCODING:  '{environ['HTTP_ACCEPT_ENCODING'] if 'HTTP_ACCEPT_ENCODIN
 HTTP_ACCEPT_LANGUAGE:  '{environ['HTTP_ACCEPT_LANGUAGE'] if 'HTTP_ACCEPT_LANGUAGE' in environ else ""}'
 ----
 
-Response:
-""")
+Response:""", end='')
 
     if is_response_text:
         print("----")
@@ -196,7 +209,7 @@ Response:
         print(f"---- type: {response_type} ----")
     print("----")
 
-    return [response_body.encode("utf-8") if is_response_text else response_body]
+    return [response_body.encode("utf-8") if isinstance(response_body, str) else response_body]
 
 
 # Python3 changes: START
@@ -237,5 +250,5 @@ Usage:
 
     print(f"Starting a web server on <localhost>:{tcp_port} ...")
     from wsgiref.simple_server import make_server
-    with make_server('127.0.0.1', tcp_port, application) as httpd:
+    with make_server('0.0.0.0', tcp_port, application) as httpd:
         httpd.serve_forever()

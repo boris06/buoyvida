@@ -116,17 +116,33 @@ def vector(selectHeights=None, startDateTime=None, endDateTime=None, scriptAbsPa
     rvBuf = ""
     rvBuf += "<!DOCTYPE html>"
     rvBuf += "<html>"
-    print
-    rvBuf += '<head>'
-    rvBuf += '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'
-    rvBuf += '<title>Buoy vector multi-plot</title>'
-    rvBuf += '<style>'
-    rvBuf += 'h2 {'
-    rvBuf += '    text-align: center;'
-    rvBuf += '}'
-    rvBuf += '</style>'
-    rvBuf += '</head>'
-    print
+
+    rvBuf += """
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Buoy vector multi-plot</title>
+<link href="//fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic,700,700italic,800,800italic" rel="stylesheet" type="text/css">
+<style>
+  body {
+    font-family: "Open Sans";
+  }
+  h2 {
+    text-align: center;
+  }
+  table {
+    border-collapse: collapse;
+    border: 1px solid black;
+  }
+  table tbody {
+    font-size: 0.7em;
+  }
+  tbody tr:nth-child(odd) {
+    background-color: lightgray;bl
+  }
+</style>
+</head>
+"""
+
     rvBuf += '<body>'
     rvBuf += '<form method="get" name="main" id="main" action="%s/vector">' % (scriptAbsPath)
     rvBuf += '<h2>Wind, waves and sea currents from the oceanographic buoy Vida</h2>'
